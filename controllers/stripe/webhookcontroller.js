@@ -1,4 +1,5 @@
- const User=require("../../models/Usermodel")
+ const User=require("../../models/Usermodel");
+const sendMessageEmail = require("../../utils/sendMessageEmail");
 const stripeWebhook = async (req, res) => {
 
   const sig = req.headers["stripe-signature"];
@@ -38,7 +39,7 @@ const stripeWebhook = async (req, res) => {
       const user = await User.findById(bazaar.owner);
 
       // send email
-await sendEmail(
+await sendMessageEmail(
   user.email,
 
   `
