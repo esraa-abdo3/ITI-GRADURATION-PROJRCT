@@ -16,7 +16,7 @@ Router.post(
 );
 Router.get("/GetAllbazaars", verfiyToken, AllowedTo("admin"), getallbazarrs)
 Router.get("/GetAllbazaars/:id", verfiyToken, AllowedTo("admin"), getbazarbyid)
-Router.get("/GetAllbazaars/:id", verfiyToken, AllowedTo("admin"), deletebazarbyid)
+Router.get("/delete/:id", verfiyToken, AllowedTo("admin"), deletebazarbyid)
 Router.post("/Update/:id", verfiyToken, AllowedTo("admin", "bazaarowner", updatebazarbyid))
 Router.post("/Capacity/:id", verfiyToken, AllowedTo("admin", "bazaarowner", updateBazaarCapacity))
 Router.post("/Status", verfiyToken, AllowedTo("admin", "bazaarowner"), toggleBazaarStatus)

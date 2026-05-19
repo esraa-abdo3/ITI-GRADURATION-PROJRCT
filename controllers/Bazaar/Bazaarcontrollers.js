@@ -211,24 +211,36 @@ const getbazarbyid =  Asncwarpper (async (req, res, next) => {
     });
   
 });
-const deletebazarbyid = Asncwarpper( async (req, res, next) => {
-
-    const id = req.params.id;
-
-    const bazar = await Bazaar.findByIdAndDelete(id);
-
-    if (!bazar) {
-      return next(
-        AppError.createError({ data: "bazar not found" }, 404)
-      );
-    }
-
-    res.status(200).json({
-      status: "success",
-      msg: "Bazaar deleted successfully",
-      data: null,
-    });
+const deletebazarbyid = Asncwarpper(async (req, res, next) => {
   
+  const id = req.params.id;
+
+
+  const bazar = await Bazaar.findById(id);
+
+  if (!bazar) {
+    return next(
+      AppError.createError({ data: "bazar not found" }, 404)
+    );
+  }
+
+
+  await User.findByIdAndUpdate(
+    bazar.owner,
+    {
+      role: "customer",
+    }
+  );
+
+
+  await Bazaar.findByIdAndDelete(id);
+
+  res.status(200).json({
+    status: "success",
+    msg: "Bazaar deleted successfully",
+    data: null,
+  });
+
 });
 /////////////////////////////////////////////////////////////
 
