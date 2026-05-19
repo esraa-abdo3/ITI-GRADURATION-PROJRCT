@@ -17,9 +17,9 @@ Router.post(
 Router.get("/GetAllbazaars", verfiyToken, AllowedTo("admin"), getallbazarrs)
 Router.get("/GetAllbazaars/:id", verfiyToken, AllowedTo("admin"), getbazarbyid)
 Router.get("/delete/:id", verfiyToken, AllowedTo("admin"), deletebazarbyid)
-Router.post("/Update/:id", verfiyToken, AllowedTo("admin", "bazaarowner", updatebazarbyid))
-Router.post("/Capacity/:id", verfiyToken, AllowedTo("admin", "bazaarowner", updateBazaarCapacity))
-Router.post("/Status", verfiyToken, AllowedTo("admin", "bazaarowner"), toggleBazaarStatus)
-Router.post("/autoClose", verfiyToken,AllowedTo("admin", "bazaarowner"),autoCloseBazaar)
+Router.patch("/Update/:id", verfiyToken, AllowedTo("admin", "bazaarowner", updatebazarbyid))
+Router.patch("/Capacity/:id", verfiyToken, AllowedTo("admin", "bazaarowner", updateBazaarCapacity))
+Router.patch("/Status", verfiyToken, AllowedTo("admin", "bazaarowner"), toggleBazaarStatus)
+Router.patch("/autoClose", verfiyToken,AllowedTo("admin", "bazaarowner"),autoCloseBazaar)
 
 module.exports=Router
