@@ -127,8 +127,23 @@ default: "draft",
       },
       transactionId: String
     },
+automationRules: {
+  enabled: {
+    type: Boolean,
+    default: false
+  },
+
+  closeWhenFull: {
+    type: Boolean,
+    default: false
+  },
 
 
+  closeBeforeHours: {
+    type: Number,
+    default: 24
+  }
+}
 
 }, { timestamps: true });
 

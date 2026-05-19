@@ -1,10 +1,11 @@
 const express = require("express");
 const Router = express.Router();
-const { createbazar, createCheckoutSession } = require("../controllers/Bazaar/Bazaarcontrollers");
+const { createbazar, createCheckoutSession,getallbazarrs, getbazarbyid, deletebazarbyid, updatebazarbyid, updateBazaarCapacity ,toggleBazaarStatus,autoCloseBazaar} = require("../controllers/Bazaar/Bazaarcontrollers");
 const { createBazaarValidation } = require("../middleware/BazaarValidation");
 const upload = require("../middleware/uploadMiddleware");
 const { stripeWebhook } = require("../controllers/stripe/webhookcontroller");
-
+const verfiyToken = require("../middleware/VerfiyToken");
+const AllowedTo = require("../../../Node/blog-app/middleware/AllowedTo");
 
 
 Router.post(
@@ -13,7 +14,12 @@ Router.post(
   createBazaarValidation(),
   createbazar
 );
-Router.post("/checkout", createCheckoutSession);
-Router.post( "/webhook",express.raw({ type: "application/json" }), stripeWebhook);
+Router.get("/GetAllbazaars", verfiyToken, AllowedTo("admin"), getallbazarrs)
+Router.get("/GetAllbazaars/:id", verfiyToken, AllowedTo("admin"), getbazarbyid)
+Router.get("/GetAllbazaars/:id", verfiyToken, AllowedTo("admin"), deletebazarbyid)
+Router.post("/Update/:id", verfiyToken, AllowedTo("admin", "bazaarowner", updatebazarbyid))
+Router.post("/Capacity/:id", verfiyToken, AllowedTo("admin", "bazaarowner", updateBazaarCapacity))
+Router.post("/Status", verfiyToken, AllowedTo("admin", "bazaarowner"), toggleBazaarStatus)
+Router.post("/autoClose", verfiyToken,AllowedTo("admin", "bazaarowner"),autoCloseBazaar)
 
 module.exports=Router
