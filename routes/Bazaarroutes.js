@@ -5,7 +5,7 @@ const { createBazaarValidation } = require("../middleware/BazaarValidation");
 const upload = require("../middleware/uploadMiddleware");
 const { stripeWebhook } = require("../controllers/stripe/webhookcontroller");
 const verfiyToken = require("../middleware/VerfiyToken");
-const AllowedTo = require("../../../Node/blog-app/middleware/AllowedTo");
+const AllowedTo = require("../middleware/AllowedTo");
 
 
 Router.post(
