@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-const sendEmail = async (to, otp ) => {
+const sendEmail = async (to, otp ,message) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -22,7 +22,7 @@ const sendEmail = async (to, otp ) => {
           <h2 style="color:#333; text-align:center;">Welcome to Bazaar 👋</h2>
 
           <p style="font-size:15px; color:#555; text-align:center;">
-            Thank you for signing up. To complete your verification, please use the OTP code below:
+           ${message}
           </p>
 
           <div style="text-align:center; margin:30px 0;">

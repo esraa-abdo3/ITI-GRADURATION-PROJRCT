@@ -133,7 +133,8 @@ const upload = await imagekit.upload({
   expiresAt: Date.now() + 5 * 60 * 1000 // 5 minutes
   });
   //send message
-  await sendEmail(email, otp);
+  await sendEmail(email, otp, " Thank you for signing up. To complete your verification, please use the OTP code below"
+);
 
   res.status(201).json({
     status: Success,
