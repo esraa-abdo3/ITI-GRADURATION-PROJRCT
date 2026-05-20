@@ -61,60 +61,60 @@ const login = (async (req, res, next) => {
         res.status(200).json({ status: "Success", data: { existuser  }, msg: "Login successful" })
 
 })
-const forgetpassword = (async (req, res, next) => {
-    const { email } = req.body
-   const user = await User.findOne({ email });
-    if (!user) {
-           const Error = AppError.createError("email not found", 400, Fail);
-            return next(Error);  
-    }
+// const forgetpassword = (async (req, res, next) => {
+//     const { email } = req.body
+//    const user = await User.findOne({ email });
+//     if (!user) {
+//            const Error = AppError.createError("email not found", 400, Fail);
+//             return next(Error);  
+//     }
   
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      await OTP.create({
-      email,
-      otp,
-      expiresAt: Date.now() + 5 * 60 * 1000 
-      });
-      //send message
-    await sendEmail(email, otp, `
-        We received a request to reset your password. Please use the OTP code below to continue with resetting your password:
-        `);
-      res.status(201).json({
-        status: Success,
-        msg: "code sent successfully",
+//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//       await OTP.create({
+//       email,
+//       otp,
+//       expiresAt: Date.now() + 5 * 60 * 1000 
+//       });
+//       //send message
+//     await sendEmail(email, otp, `
+//         We received a request to reset your password. Please use the OTP code below to continue with resetting your password:
+//         `);
+//       res.status(201).json({
+//         status: Success,
+//         msg: "code sent successfully",
 
-      });
+//       });
     
-})
-const resetpassword = async (req, res, next) => {
-  const { email, password } = req.body;
+// })
+// const resetpassword = async (req, res, next) => {
+//   const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
+//   const user = await User.findOne({ email });
 
-  if (!user) {
-    const Error = AppError.createError(
-      "email not found",
-      400,
-      Fail
-    );
+//   if (!user) {
+//     const Error = AppError.createError(
+//       "email not found",
+//       400,
+//       Fail
+//     );
 
-    return next(Error);
-  }
+//     return next(Error);
+//   }
 
-  const hashedpassword = await bcrypt.hash(password, 10);
+//   const hashedpassword = await bcrypt.hash(password, 10);
 
-  user.password = hashedpassword;
+//   user.password = hashedpassword;
 
-  await user.save();
+//   await user.save();
 
-  res.status(201).json({
-    status: Success,
-    msg: "password reset successfully",
-  });
-};
+//   res.status(201).json({
+//     status: Success,
+//     msg: "password reset successfully",
+//   });
+// };
 module.exports = {
     register,
     login,
-    forgetpassword,
-    resetpassword 
+    // forgetpassword,
+    // resetpassword 
 }
