@@ -1,33 +1,69 @@
-const OTP =require("../../models/otpmodel")
-const verifyOtp = async (req, res, next) => {
+// const OTP =require("../../models/otpmodel")
+// const verifyOtp = async (req, res, next) => {
 
+//   const { email, otp } = req.body;
+
+//   const existingOtp = await OTP.findOne({
+//     email,
+//     otp,
+//     verified: false
+//   });
+
+//   if (!existingOtp) {
+//     return res.status(400).json({
+//       msg: "Invalid OTP"
+//     });
+//   }
+
+//   if (existingOtp.expiresAt < Date.now()) {
+//     return res.status(400).json({
+//       msg: "OTP expired",
+//       status:404
+//     });
+//   }
+
+//   existingOtp.verified = true;
+
+//   await existingOtp.save();
+
+//   res.json({
+//     msg: "OTP verified successfully"
+//   });
+// };
+// module.exports = {
+//   verifyOtp
+  
+// }
+const verifyOtp = async (req, res, next) => {
   const { email, otp } = req.body;
 
-  const existingOtp = await OTP.findOne({
-    email,
-    otp,
-    verified: false
-  });
+  const otpRecord = await OTP.findOne({ email });
 
-  if (!existingOtp) {
-    return res.status(400).json({
-      msg: "Invalid OTP"
-    });
+  if (!otpRecord) {
+    return next(
+      AppError.createError("OTP not found", 400, Fail)
+    );
   }
 
-  if (existingOtp.expiresAt < Date.now()) {
-    return res.status(400).json({
-      msg: "OTP expired",
-      status:404
-    });
+  // check expiry
+  if (otpRecord.expiresAt < Date.now()) {
+    return next(
+      AppError.createError("OTP expired", 400, Fail)
+    );
   }
 
-  existingOtp.verified = true;
+  // compare hashed otp
+  const isMatch = await bcrypt.compare(otp, otpRecord.otp);
 
-  await existingOtp.save();
+  if (!isMatch) {
+    return next(
+      AppError.createError("Invalid OTP", 400, Fail)
+    );
+  }
 
-  res.json({
-    msg: "OTP verified successfully"
+  res.status(200).json({
+    status: Success,
+    msg: "OTP verified successfully",
   });
 };
 module.exports = {

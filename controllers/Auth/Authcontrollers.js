@@ -61,31 +61,44 @@ const login = (async (req, res, next) => {
         res.status(200).json({ status: "Success", data: { existuser  }, msg: "Login successful" })
 
 })
-// const forgetpassword = (async (req, res, next) => {
-//     const { email } = req.body
-//    const user = await User.findOne({ email });
-//     if (!user) {
-//            const Error = AppError.createError("email not found", 400, Fail);
-//             return next(Error);  
-//     }
-  
-//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-//       await OTP.create({
-//       email,
-//       otp,
-//       expiresAt: Date.now() + 5 * 60 * 1000 
-//       });
-//       //send message
-//     await sendEmail(email, otp, `
-//         We received a request to reset your password. Please use the OTP code below to continue with resetting your password:
-//         `);
-//       res.status(201).json({
-//         status: Success,
-//         msg: "code sent successfully",
+const forgetpassword = async (req, res, next) => {
+  const { email } = req.body;
 
-//       });
-    
-// })
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return next(
+      AppError.createError("email not found", 400, Fail)
+    );
+  }
+
+  // delete old OTPs
+  await OTP.deleteMany({ email });
+
+  // generate OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // save OTP (best practice: hash it)
+  const hashedOtp = await bcrypt.hash(otp, 10);
+
+  await OTP.create({
+    email,
+    otp: hashedOtp,
+    expiresAt: Date.now() + 5 * 60 * 1000, // 5 min
+  });
+
+  // send email
+  await sendEmail(
+    email,
+    otp,
+    `We received a request to reset your password. Use this OTP: `
+  );
+
+  res.status(200).json({
+    status: Success,
+    msg: "OTP sent successfully",
+  });
+};
 // const resetpassword = async (req, res, next) => {
 //   const { email, password } = req.body;
 
@@ -114,7 +127,8 @@ const login = (async (req, res, next) => {
 // };
 module.exports = {
     register,
-    login,
+  login,
+    forgetpassword
     // forgetpassword,
     // resetpassword 
 }
