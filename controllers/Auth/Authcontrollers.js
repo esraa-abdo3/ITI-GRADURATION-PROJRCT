@@ -23,7 +23,13 @@ const register = (async (req, res, next) => {
         // generate token
     const token = Generatejwt({ id: newuser._id, role: newuser.role, email: newuser.email });
     await newuser.save();
-      res.status(201).json({ status: Success, msg: "user created successfully", data: { newuser, token:token } });
+    res.cookie("token", token, {
+  httpOnly: true,
+  secure: false,        // لازم HTTPS في production
+  sameSite: "lax",     // أو "none" لو cross-site
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+});
+      res.status(201).json({ status: Success, msg: "user created successfully", data: { newuser } });
     
 })
 const login = (async (req, res, next) => {
@@ -43,8 +49,14 @@ const login = (async (req, res, next) => {
             const Error = AppError.createError({ data: "Invalid email or password" }, 400, Fail);
             return next(Error);
         }
-        const token = Generatejwt({ id: existuser._id, role: existuser.role, email: existuser.email });
-        res.status(200).json({ status: "Success", data: { existuser , token }, msg: "Login successful" })
+    const token = Generatejwt({ id: existuser._id, role: existuser.role, email: existuser.email });
+        res.cookie("token", token, {
+  httpOnly: true,
+  secure: false,        
+  sameSite: "lax",     
+  maxAge: 7 * 24 * 60 * 60 * 1000, 
+});
+        res.status(200).json({ status: "Success", data: { existuser  }, msg: "Login successful" })
 
 })
 module.exports = {
