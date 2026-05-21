@@ -3,8 +3,8 @@ const nodemailer = require("nodemailer");
 const sendEmail = async (to, otp ,message) => {
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  port: 587,        // ✅ شغال على Vercel
+  secure: false,    // ✅ false مع 587
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
