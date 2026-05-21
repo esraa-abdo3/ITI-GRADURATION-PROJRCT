@@ -37,7 +37,6 @@
 const OTP = require("../../models/otpmodel")
 const bcrypt = require('bcryptjs');
 const { Success, Error, Fail } = require("../../utils/HttpsStatus");
-
 const AppError = require("../../utils/AppError");
 const verifyOtp = async (req, res, next) => {
   const { email, otp } = req.body;
