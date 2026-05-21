@@ -2,11 +2,15 @@ const { validationResult } = require("express-validator");
 const Asncwrapper = require("../../middleware/Asncwrapper");
 const bcrypt = require('bcryptjs');
 const Generatejwt = require("../../utils/Generatejwt");
-const User=require("../../models/Usermodel")
+const User =require("../../models/Usermodel")
 const { Success, Error, Fail } = require("../../utils/HttpsStatus");
 const AppError = require("../../utils/AppError");
 const OTP = require("../../models/otpmodel");
 const sendEmail = require("../../utils/sendEmail")
+
+
+
+
 const register = (async (req, res, next) => {
     const errors = validationResult(req);
        if (!errors.isEmpty()) {
@@ -61,88 +65,73 @@ const login = (async (req, res, next) => {
         res.status(200).json({ status: "Success", data: { existuser  }, msg: "Login successful" })
 
 })
-// const forgetpassword = async (req, res, next) => {
-//   const { email } = req.body;
+ const forgetpassword = async (req, res, next) => {
+  const { email } = req.body;
 
-//   const user = await User.findOne({ email });
+   const user = await User.findOne({ email });
 
-//   if (!user) {
-//     return next(
-//       AppError.createError("email not found", 400, Fail)
-//     );
-//   }
+  if (!user) {
+    return next(
+      AppError.createError("email not found", 400, Fail)
+     )   }
 
 //   // delete old OTPs
-//   await OTP.deleteMany({ email });
+   await OTP.deleteMany({ email });
 
 //   // generate OTP
-//   const otp = Math.floor(100000 + Math.random() * 900000).toString();
+   const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
 //   // save OTP (best practice: hash it)
-//   const hashedOtp = await bcrypt.hash(otp, 10);
+   const hashedOtp = await bcrypt.hash(otp, 10);
 
-//   await OTP.create({
-//     email,
-//     otp: hashedOtp,
-//     expiresAt: Date.now() + 5 * 60 * 1000, // 5 min
-//   });
+   await OTP.create({
+    email,     otp: hashedOtp,
+    expiresAt: Date.now() + 5 * 60 * 1000, // 5 min
+  });
 
 //   // send email
-//   await sendEmail(
-//     email,
-//     otp,
-//     `We received a request to reset your password. Use this OTP: `
-//   );
+   await sendEmail(
+    email,
+     otp,
+     `We received a request to reset your password. Use this OTP: `
+  );
 
-//   res.status(200).json({
-//     status: Success,
-//     msg: "OTP sent successfully",
-//   });
-// };
-// const resetpassword = async (req, res, next) => {
-//   const { email, password } = req.body;
+   res.status(200).json({
+     status: Success,
+    msg: "OTP sent successfully",
+   });
+ };
+const resetpassword = async (req, res, next) => {
+  const { email, password } = req.body;
 
-//   const user = await User.findOne({ email });
+  const user = await User.findOne({ email });
 
-//   if (!user) {
-//     const Error = AppError.createError(
-//       "email not found",
-//       400,
-//       Fail
-//     );
+  if (!user) {
+    const Error = AppError.createError(
+      "email not found",
+      400,
+      Fail
+    );
 
-//     return next(Error);
-//   }
-
-//   const hashedpassword = await bcrypt.hash(password, 10);
-
-//   user.password = hashedpassword;
-
-//   await user.save();
-
-//   res.status(201).json({
-//     status: Success,
-//     msg: "password reset successfully",
-//   });
-// };
-const forgetpassword = async (req, res, next) => {
-  try {
-    const { email } = req.body;
-
-    // خطوة ١ بس
-    const user = await User.findOne({ email });
-    console.log("user found:", user);
-
-    res.status(200).json({ msg: "test ok" });
-  } catch (err) {
-    console.log("ERROR:", err.message);
-    next(err);
+    return next(Error);
   }
+
+  const hashedpassword = await bcrypt.hash(password, 10);
+
+  user.password = hashedpassword;
+
+  await user.save();
+
+  res.status(201).json({
+    status: Success,
+    msg: "password reset successfully",
+  });
 };
+
 module.exports = {
     register,
-  login,
-    forgetpassword
+    login,
+    forgetpassword,
     // forgetpassword,
-    // resetpassword 
+    resetpassword 
 }
