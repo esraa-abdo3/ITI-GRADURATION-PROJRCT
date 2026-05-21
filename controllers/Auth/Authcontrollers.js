@@ -87,7 +87,8 @@ const login = (async (req, res, next) => {
    await OTP.create({
     email,     otp: hashedOtp,
     expiresAt: Date.now() + 5 * 60 * 1000, // 5 min
-  });
+   });
+   
 
 //   // send email
    await sendEmail(
@@ -114,6 +115,17 @@ const resetpassword = async (req, res, next) => {
     );
 
     return next(Error);
+  }
+    const otpRecord = await OTP.findOne({ email });
+
+  if (!otpRecord || !otpRecord.verified) {
+    return next(
+      AppError.createError(
+        "OTP not verified",
+        400,
+        Fail
+      )
+    );
   }
 
   const hashedpassword = await bcrypt.hash(password, 10);

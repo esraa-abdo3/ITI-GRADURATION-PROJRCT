@@ -1,4 +1,4 @@
-// const OTP =require("../../models/otpmodel")
+
 // const verifyOtp = async (req, res, next) => {
 
 //   const { email, otp } = req.body;
@@ -34,6 +34,11 @@
 //   verifyOtp
   
 // }
+const OTP = require("../../models/otpmodel")
+const bcrypt = require('bcryptjs');
+const { Success, Error, Fail } = require("../../utils/HttpsStatus");
+
+const AppError = require("../../utils/AppError");
 const verifyOtp = async (req, res, next) => {
   const { email, otp } = req.body;
 
@@ -60,6 +65,9 @@ const verifyOtp = async (req, res, next) => {
       AppError.createError("Invalid OTP", 400, Fail)
     );
   }
+  otpRecord.verified = true;
+
+await otpRecord.save();
 
   res.status(200).json({
     status: Success,
